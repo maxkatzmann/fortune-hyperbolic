@@ -1,8 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "beachline.hpp"
-#include "kernels.hpp"
-#include "fortune.hpp"
+#include "beachline.h"
+#include "kernels.h"
 
 #include <vector>
 #include <memory>
