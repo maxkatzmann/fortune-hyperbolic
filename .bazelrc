@@ -1,0 +1,2 @@
+build --cxxopt='-std=c++2a'
+test --test_output=errors --action_env="GTEST_COLOR=1"
