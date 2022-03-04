@@ -88,3 +88,21 @@ cc_binary(
         "@boost//:multiprecision",
     ],
 )
+
+cc_binary(
+    name = "cgal_util",
+    srcs = ["cgal_util.cc"],
+    defines = ["CGAL_USE_CORE"],
+    deps = [
+        ":cxxopts",
+        "@boost//:algorithm",
+        "@boost//:any",
+        "@boost//:config",
+        "@boost//:property_map",
+        "@boost//:random",
+        "@boost//:variant",
+        "@cgalinc//:headers",
+        "@gmpinc//:headers",
+        "@gmplib//:lib",
+    ],
+)

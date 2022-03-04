@@ -58,3 +58,18 @@ includes = ["."],
 """,
             path = "/usr/local/opt/gmp/include",
         )
+
+    # CGAL
+    if not native.existing_rule("cgalinc"):
+        native.new_local_repository(
+            name = "cgalinc",
+            build_file_content = """
+package(default_visibility = ["//visibility:public"])
+cc_library(
+name = "headers",
+hdrs = glob(["**/*"]),
+includes = ["."],
+)
+""",
+            path = "/usr/local/opt/cgal/include",
+        )
