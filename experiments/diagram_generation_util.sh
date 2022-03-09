@@ -5,7 +5,7 @@
 #
 # Usage:
 #
-#     bazel run -c opt generate_triangulations_util -- -j 4
+#     bazel run -c opt diagram_generation_util -- -j 4
 
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi

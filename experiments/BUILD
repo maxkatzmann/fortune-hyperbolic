@@ -72,8 +72,8 @@ filegroup(
 )
 
 sh_binary(
-    name = "triangulation_generation_util",
-    srcs = ["triangulation_generation_util.sh"],
+    name = "diagram_generation_util",
+    srcs = ["diagram_generation_util.sh"],
     data = [
         ":data",
         ":projectroot",
@@ -86,12 +86,12 @@ sh_binary(
 )
 
 sh_binary(
-    name = "triangulation_cgal_generation_util",
-    srcs = ["triangulation_cgal_generation_util.sh"],
+    name = "diagram_cgal_generation_util",
+    srcs = ["diagram_cgal_generation_util.sh"],
     data = [
         ":data",
+        ":diagram_cgal_util",
         ":projectroot",
-        ":triangulation_cgal_util",
     ],
     deps = [
         ":bazel_utilities",
@@ -104,6 +104,18 @@ filegroup(
     srcs = glob([
         "results/**/diagrams/*.txt",
     ]),
+)
+
+filegroup(
+    name = "result_diagrams_cgal",
+    srcs = glob([
+        "results/**/diagrams-cgal/*.txt",
+    ]),
+)
+
+py_library(
+    name = "diagram_comparison",
+    srcs = ["diagram_comparison.py"],
 )
 
 proto_library(
@@ -121,6 +133,7 @@ py_binary(
     srcs = ["diagram_groundtruth_comparison_util.py"],
     data = [
         ":data",
+        ":diagram_comparison",
         ":projectroot",
     ],
     deps = [":diagram_groundtruth_comparison_py_proto"],

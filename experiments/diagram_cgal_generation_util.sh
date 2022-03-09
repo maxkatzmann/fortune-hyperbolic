@@ -5,16 +5,17 @@
 #
 # Usage:
 #
-#     bazel run -c opt generate_cgal_triangulations_util
+#     bazel run -c opt diagram_cgal_generation_util -- -j 4
 
+# Import bazel utitlities.
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 . "$DIR/bazel_utilities"
 
 # Path to the Bazel target of the generator
-cgalUtilPath=$(rlocation "__main__/experiments/triangulation_cgal_util")
+cgalUtilPath=$(rlocation "__main__/experiments/diagram_cgal_util")
 if [[ ! -f "${cgalUtilPath:-}" ]]; then
-    echo >&2 "ERROR: could not look up the cgal_util binary path."
+    echo >&2 "ERROR: could not look up the diagram_cgal_util binary path."
     exit 1
 fi
 
@@ -43,8 +44,8 @@ do
     targetDir="${resultsPath}/${filename}"
     mkdir -p ${targetDir}
 
-    triangulationsDir="${targetDir}/triangulations-cgal"
-    mkdir -p ${triangulationsDir}
+    diagramsDir="${targetDir}/diagrams-cgal"
+    mkdir -p ${diagramsDir}
 
-    ${cgalUtilPath} -i ${filePath} -o ${triangulationsDir}/${filename}-triangulation-cgal.txt
+    ${cgalUtilPath} -i ${filePath} -o ${diagramsDir}/${filename}-diagram-cgal.txt
 done

@@ -102,6 +102,11 @@ int main(int argc, char** argv) {
     r = 2.0 * atanh(r);
     auto angle = atan2(y, x);
 
+    // Make sure angle is in [0, 2pi]
+    if (angle < 0.0) {
+      angle += 2 * M_PI;
+    }
+
     outputFileStream << r << " " << angle << "\n";
   }
 

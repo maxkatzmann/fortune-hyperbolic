@@ -51,7 +51,8 @@ def read_comparison_from_buffer(buffer_path):
         print(f'Unable to read buffer from file: {buffer_path}\n -> {e}')
 
 
-def get_row_from_comparison(comparison):
+def get_rows_from_comparison(comparison):
+    rows = []
     components = [
         comparison.diskRadius, comparison.diagram, comparison.numberOfPoints
     ]
@@ -59,27 +60,22 @@ def get_row_from_comparison(comparison):
     results = sorted(comparison.comparisons, key=lambda x: x.precision)
 
     for result in results:
-        vertexPercentage = float(result.numberOfVertices) / float(
-            comparison.groundTruth.numberOfVertices)
-        components.append(vertexPercentage)
+        rows.append(components + [
+            result.precision,
+            float(result.numberOfVertices) /
+            float(comparison.groundTruth.numberOfVertices),
+            float(result.numberOfVerticesMatchingGroundTruth) /
+            float(comparison.groundTruth.numberOfVertices)
+        ])
 
-        matchingPercentage = float(
-            result.numberOfVerticesMatchingGroundTruth) / float(
-                comparison.groundTruth.numberOfVertices)
-        components.append(matchingPercentage)
-
-    return components
+    return rows
 
 
 def get_header_from_comparison(comparison):
-    header = ['DiskRadius', 'DiagramID', 'NumberOfPoints']
-
-    results = sorted(comparison.comparisons, key=lambda x: x.precision)
-    for result in results:
-        header.append(str(result.precision) + '.VertexPercentage')
-        header.append(str(result.precision) + '.MatchingPercentage')
-
-    return header
+    return [
+        'DiskRadius', 'DiagramID', 'NumberOfPoints', 'Precision',
+        'VertexPercentage', 'MatchingPercentage'
+    ]
 
 
 def generate_csv_from_comparisons(comparisons):
@@ -87,7 +83,7 @@ def generate_csv_from_comparisons(comparisons):
     rows = []
     for comparison in comparisons:
         header = get_header_from_comparison(comparison)
-        rows.append(get_row_from_comparison(comparison))
+        rows += get_rows_from_comparison(comparison)
 
     rows = sorted(rows, key=lambda x: (int(x[0]), int(x[1])))
     rows = [[str(entry) for entry in row] for row in rows]

@@ -16,18 +16,7 @@ from pathlib import Path
 from multiset import Multiset
 
 from experiments.diagram_groundtruth_comparison_pb2 import Comparison
-
-
-class Point:
-    def __init__(self, radius, angle):
-        self.radius = radius
-        self.angle = angle
-
-    def __eq__(self, other):
-        return self.radius == other.radius and self.angle == other.angle
-
-    def __hash__(self):
-        return hash((self.radius, self.angle))
+from diagram_comparison import read_diagram, matches_between_point_sets
 
 
 def main(argv):
@@ -65,7 +54,6 @@ def main(argv):
         for f in listdir(diagrams_path) if isfile(join(diagrams_path, f))
     ],
                            key=cmp_to_key(precision_sort))
-    print(diagram_files)
 
     comparison = Comparison()
 
@@ -77,26 +65,23 @@ def main(argv):
     comparison.numberOfPoints = get_number_of_points_in_file(
         groundtruth_radius, groundtruth_id)
 
-    groundtruth_points = read_file(groundtruth_path)
-    groundtruth_point_set = Multiset(groundtruth_points)
+    groundtruth_points = read_diagram(groundtruth_path)
 
     comparison.groundTruth.precision = groundtruth_precision
     comparison.groundTruth.numberOfVertices = len(groundtruth_points)
     comparison.groundTruth.numberOfVerticesMatchingGroundTruth = -1
 
-    for cmp_file in diagram_files[1:]:
+    for cmp_file in diagram_files[:-1]:
         (comparison_radius, comparison_id,
          comparison_precision) = get_parameters_from_file_path(cmp_file)
-        comparison_points = read_file(cmp_file)
+        comparison_points = read_diagram(cmp_file)
 
         comparison_result = comparison.comparisons.add()
         comparison_result.precision = comparison_precision
         comparison_result.numberOfVertices = len(comparison_points)
 
-        comparison_point_set = Multiset(comparison_points)
-
-        number_of_matches = len(
-            groundtruth_point_set.intersection(comparison_point_set))
+        number_of_matches = matches_between_point_sets(groundtruth_points,
+                                                       comparison_points)
         comparison_result.numberOfVerticesMatchingGroundTruth = number_of_matches
 
     # Write the new comparison to file.
@@ -107,21 +92,6 @@ def main(argv):
     f.write(comparison.SerializeToString())
     f.close()
     print(f'Result written to file: {output_file_name}')
-
-
-def read_file(file_path):
-    print(f'Reading file: {file_path}')
-
-    points = []
-    with open(file_path, 'r') as f:
-        for line in f:
-            radius, angle = [float(x) for x in line.split(' ')]
-            points.append(Point(radius, angle))
-
-    def point_compare(p):
-        return (p.radius, p.angle)
-
-    return sorted(points, key=point_compare)
 
 
 def get_parameters_from_file_path(file_path):
