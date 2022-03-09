@@ -21,6 +21,7 @@ namespace hyperbolic {
         double width = 300, height = 300;
         double line_width = 0.01, point_width = 0.02;
         double resolution = 0.01;
+        string voronoi_vertex_color = "blue";
         string voronoi_edge_color = "black";
         string delaunay_edge_color = "red";
         string point_color = "black";
@@ -161,6 +162,12 @@ namespace hyperbolic {
                 svg_representation += point_representation;
             }
 
+            for (auto const & p : voronoiDiagram.vertices) {
+                std::string point_representation;
+                svg_point_representation(CartesianPoint(*p), options.point_width, point_representation, options.voronoi_vertex_color);
+                svg_representation += point_representation;
+            }
+
             std::string point_representation;
             svg_point_representation(CartesianPoint(0, 0), options.point_width/2, point_representation, options.point_color);
             svg_representation += point_representation;
@@ -243,7 +250,7 @@ namespace hyperbolic {
 
         void write_diagram(string filename) {
             std::fstream output_file_stream(filename, std::fstream::out);
-            for (auto& p : voronoiDiagram.vertices) {
+            for (const auto& p : voronoiDiagram.vertices) {
               output_file_stream << p->r << " " << p->theta << "\n";
             }
         }

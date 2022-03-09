@@ -23,6 +23,24 @@ cc_binary(
     ],
 )
 
+cc_binary(
+    name = "diagram_cgal_util",
+    srcs = ["diagram_cgal_util.cc"],
+    defines = ["CGAL_USE_CORE"],
+    deps = [
+        "//:cxxopts",
+        "@boost//:algorithm",
+        "@boost//:any",
+        "@boost//:config",
+        "@boost//:property_map",
+        "@boost//:random",
+        "@boost//:variant",
+        "@cgalinc//:headers",
+        "@gmpinc//:headers",
+        "@gmplib//:lib",
+    ],
+)
+
 filegroup(
     name = "projectroot",
     srcs = ["README.md"],

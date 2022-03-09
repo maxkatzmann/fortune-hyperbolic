@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
     std::vector<Point_2> pts;
 
     cxxopts::Options options(
-            argv[0], "Calculates a hyperbolic voronoi diagram from a set of sites using the implementation of CGAL 5.2 operating in the Poincare disk model");
+            argv[0], "Calculates the hyperbolic delaunary triangulation from a set of sites using the implementation of CGAL 5.2 operating in the Poincare disk model");
 
     options.add_options()
             ("i,input", "Input Filename", cxxopts::value<std::string>())
