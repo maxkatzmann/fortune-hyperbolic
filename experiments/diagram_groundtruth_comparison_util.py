@@ -1,22 +1,20 @@
-# Given two files containing voronoi vertices, compares in how many points they
-# differ.
+# Given a set of files containing voronoi vertices, compares in how many points
+# they differ.
 #
 # Usage:
-#   bazel run -c opt experiments/diagram_groundtruth_comparison_util -- --diagrams path/to/directory/containing/diagrams --output path/to/where/the/result should be stored
+#   bazel run -c opt experiments/diagram_groundtruth_comparison_util -- --diagrams path/to/directory/containing/diagrams --output path/to/result/directory
 #
 
 import argparse
 from functools import cmp_to_key
 import sys
-import os
 from os import listdir
 from os.path import isfile, join
 
 from pathlib import Path
-from multiset import Multiset
 
 from experiments.diagram_groundtruth_comparison_pb2 import Comparison
-from diagram_comparison import read_diagram, matches_between_point_sets
+from diagram_comparison import read_diagram, matches_between_point_sets, get_number_of_points_in_file
 
 
 def main(argv):
@@ -101,16 +99,6 @@ def get_parameters_from_file_path(file_path):
     file_name_components = file_name.split('-')
     return (int(file_name_components[0]), int(file_name_components[1]),
             int(file_name_components[-1]))
-
-
-def get_number_of_points_in_file(disk_radius, diagram_id):
-    points_path = Path(os.getcwd()) / 'experiments' / 'data'
-    file_path = str(disk_radius) + '-' + str(diagram_id) + '.txt'
-
-    path = points_path / Path(file_path)
-    num_lines = sum(1 for line in open(path))
-
-    return num_lines
 
 
 if __name__ == '__main__':

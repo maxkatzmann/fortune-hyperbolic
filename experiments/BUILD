@@ -158,3 +158,14 @@ py_binary(
     srcs = ["diagram_groundtruth_comparison_aggregation_util.py"],
     deps = [":diagram_groundtruth_comparison_py_proto"],
 )
+
+py_binary(
+    name = "diagram_cgal_comparison_aggregation_util",
+    srcs = ["diagram_cgal_comparison_aggregation_util.py"],
+    data = [
+        ":data",
+        ":result_diagrams",
+        ":result_diagrams_cgal",
+    ],
+    deps = [":diagram_comparison"],
+)

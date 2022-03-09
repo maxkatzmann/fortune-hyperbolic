@@ -1,4 +1,6 @@
 from multiset import Multiset
+from pathlib import Path
+import os
 
 
 class Point:
@@ -30,3 +32,13 @@ def matches_between_point_sets(points1, points2):
     point_set1 = Multiset(points1)
     point_set2 = Multiset(points2)
     return len(point_set1.intersection(point_set2))
+
+
+def get_number_of_points_in_file(disk_radius, diagram_id):
+    points_path = Path(os.getcwd()) / 'experiments' / 'data'
+    file_path = str(disk_radius) + '-' + str(diagram_id) + '.txt'
+
+    path = points_path / Path(file_path)
+    num_lines = sum(1 for line in open(path))
+
+    return num_lines

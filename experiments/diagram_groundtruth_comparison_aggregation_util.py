@@ -71,7 +71,7 @@ def get_rows_from_comparison(comparison):
     return rows
 
 
-def get_header_from_comparison(comparison):
+def get_header():
     return [
         'DiskRadius', 'DiagramID', 'NumberOfPoints', 'Precision',
         'VertexPercentage', 'MatchingPercentage'
@@ -79,10 +79,9 @@ def get_header_from_comparison(comparison):
 
 
 def generate_csv_from_comparisons(comparisons):
-    header = []
+    header = get_header()
     rows = []
     for comparison in comparisons:
-        header = get_header_from_comparison(comparison)
         rows += get_rows_from_comparison(comparison)
 
     rows = sorted(rows, key=lambda x: (int(x[0]), int(x[1])))
