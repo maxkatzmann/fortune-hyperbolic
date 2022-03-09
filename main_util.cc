@@ -40,7 +40,8 @@ int main(int argc, char* argv[]) {
     options.add_options()
             ("i,input", "Input Filename", cxxopts::value<std::string>())
             ("v,verbose", "Enable verbose output (only for debugging)", cxxopts::value<bool>()->default_value("false"))
-            ("d,output_diagram", "Output Filename for writing the diagram svg", cxxopts::value<std::string>())
+            ("d,output_diagram_svg", "Output Filename for writing the diagram svg", cxxopts::value<std::string>())
+            ("o,output_diagram_txt", "Output Filename for writing the diagram coordinates", cxxopts::value<std::string>())
             ("t,output_triangulation", "Output Filename for writing the delaunay triangulation", cxxopts::value<std::string>())
             ("p,precision", "Specifies the number of bits that should be used for computations.  Allowed values are multiple of 16 in [32, ..., 256].  Defaults to Double presision for values outside of that range.", cxxopts::value<int>()->default_value("0"))
             ("h,help", "Print usage");
@@ -53,6 +54,7 @@ int main(int argc, char* argv[]) {
     }
 
     string input_file = result["i"].as<string>();
+    std::cout << "Computing diagram of file: " << input_file << "\n";
 
     // read the input
     ifstream input_stream(input_file);
@@ -188,17 +190,27 @@ int main(int argc, char* argv[]) {
     VoronoiCanvasOptions canvas_options;
     canvas_options.width = 500;
     VoronoiCanvas canvas(v, sites);
+
+    // Diagram
+    if (result.count("o")) {
+        string output_file = result["o"].as<string>();
+        canvas.write_diagram(output_file);
+        cout << "Diagram written to: " << output_file << ".\n";
+    }
+
+    // Triangulation
+    if (result.count("t")) {
+        string output_file = result["t"].as<string>();
+        canvas.write_delaunay_triangulation(output_file);
+        cout << "Triangulation written to: " << output_file << ".\n";
+    }
+
+    // Drawing
     if (result.count("d")) {
         string output_file = result["d"].as<string>();
         canvas.set_options(canvas_options);
         canvas.draw_diagram(output_file);
         cout << "Drawing written to: " << output_file << "\n";
-    }
-
-    if (result.count("t")) {
-        string output_file = result["t"].as<string>();
-        canvas.write_delaunay_triangulation(output_file);
-        cout << "Triangulation written to: " << output_file << ".\n";
     }
 
     return 0;

@@ -48,7 +48,48 @@ r_rules_dependencies()
 
 r_register_toolchains()
 
+# Protobuf
+http_archive(
+    name = "com_google_protobuf",
+    sha256 = "528927e398f4e290001886894dac17c5c6a2e5548f3fb68004cfb01af901b53a",
+    strip_prefix = "protobuf-3.17.3",
+    urls = ["https://github.com/google/protobuf/archive/v3.17.3.zip"],
+)
+
+# Protobuf expects an //external:python_headers label which would contain the
+# Python headers if fast Python protos is enabled. Since we are not using fast
+# Python protos, bind python_headers to a dummy target.
+bind(
+    name = "python_headers",
+    actual = "//:dummy",
+)
+
+load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+
+protobuf_deps()
+
+# rules_proto defines abstract rules for building Protocol Buffers.
+http_archive(
+    name = "rules_proto",
+    sha256 = "57001a3b33ec690a175cdf0698243431ef27233017b9bed23f96d44b9c98242f",
+    strip_prefix = "rules_proto-9cd4f8f1ede19d81c6d48910429fe96776e567b1",
+    urls = [
+        "https://github.com/bazelbuild/rules_proto/archive/9cd4f8f1ede19d81c6d48910429fe96776e567b1.tar.gz",
+    ],
+)
+
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+
+rules_proto_dependencies()
+
+rules_proto_toolchains()
+
 # GMP and MPFR
 load("fortune_deps.bzl", "fortune_deps")
 
 fortune_deps()
+
+# CGAL
+load("//experiments:cgal_deps.bzl", "cgal_deps")
+
+cgal_deps()

@@ -16,13 +16,23 @@ Voronoi cells are neighboring.
 <img src="example/voronoi_example.png" width="600" height="600" />
 </p>
 
+## Prerequisites
+
+- [Bazel](https://bazel.build)
+- [GMP](https://gmplib.org)
+- [MPFR](https://www.mpfr.org)
+- [CGAL](https://www.cgal.org)
+- [Multiset](https://pypi.org/project/multiset/)
+- [Parallel](https://www.gnu.org/software/parallel/)
+
+If the libraries _GMP_, _MPFR_, and _CGAL_ are not are not installed
+in their default locations `/usr/local/opt/...`, the `path` variables
+in `cgal_deps.bzl` and `fortune_deps.bzl` have to be adjusted.  
+
 ## How to use
 
-This repository uses the [Bazel build system](https://bazel.build) to
-compile the source code.  Additionally, [GMP](https://gmplib.org) and
-[MPFR](https://www.mpfr.org) are required.  Then, the `generator_util`
-provides functionality to generate random point sets in the hyperbolic
-plane.
+The `generator_util` provides functionality to generate random point
+sets in the hyperbolic plane.
 
 The command
 ```

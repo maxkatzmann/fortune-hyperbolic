@@ -240,5 +240,13 @@ namespace hyperbolic {
                 output_file_stream << e->siteA.ID << " " << e->siteB.ID << "\n";
             }
         }
+
+        void write_diagram(string filename) {
+            std::fstream output_file_stream(filename, std::fstream::out);
+            for (auto& p : voronoiDiagram.vertices) {
+              output_file_stream << p->r << " " << p->theta << "\n";
+            }
+        }
+
     };
 }

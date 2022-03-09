@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package experiments;
+
+message Comparison {
+  // The radius of the disk containing the points
+  int32 diskRadius = 1; 
+  // The identifier of the diagram
+  int32 diagram = 2; 
+  // The number of points in the diagram
+  int32 numberOfPoints = 3; 
+
+  // Values describing the result of a comparison.
+  message Result {
+    // The number of bits used to represent floating point values.
+    int32 precision = 1; 
+    // The number of Voronoi vertices in the diagram.
+    int32 numberOfVertices = 2; 
+    // The number of vertices that match in ground truth and a
+    // comparison diagram.
+    int32 numberOfVerticesMatchingGroundTruth = 3; 
+  }
+
+  // The object storing the information about the groundtruth
+  Result groundTruth = 4; 
+  // The objects storing comparisons to the groundtruth
+  repeated Result comparisons = 5;
+}

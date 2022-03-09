@@ -6,11 +6,13 @@ load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
 cc_library(
     name = "cxxopts",
     hdrs = ["cxxopts.h"],
+    visibility = ["//experiments:__subpackages__"],
 )
 
 cc_binary(
     name = "generator_util",
     srcs = ["generator_util.cc"],
+    visibility = ["//experiments:__subpackages__"],
     deps = [
         ":cxxopts",
     ],
@@ -81,28 +83,11 @@ cc_library(
 cc_binary(
     name = "main_util",
     srcs = ["main_util.cc"],
+    visibility = ["//experiments:__subpackages__"],
     deps = [
         ":cxxopts",
         ":fortune",
         ":mpfr",
         "@boost//:multiprecision",
-    ],
-)
-
-cc_binary(
-    name = "cgal_util",
-    srcs = ["cgal_util.cc"],
-    defines = ["CGAL_USE_CORE"],
-    deps = [
-        ":cxxopts",
-        "@boost//:algorithm",
-        "@boost//:any",
-        "@boost//:config",
-        "@boost//:property_map",
-        "@boost//:random",
-        "@boost//:variant",
-        "@cgalinc//:headers",
-        "@gmpinc//:headers",
-        "@gmplib//:lib",
     ],
 )
