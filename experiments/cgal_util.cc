@@ -29,8 +29,14 @@ int main(int argc, char** argv) {
 
   options.add_options()("i,input", "Input Filename",
                         cxxopts::value<std::string>())(
-      "o,output", "Output Filename",
-      cxxopts::value<std::string>())("h,help", "Print usage");
+      "o,output_diagram_txt",
+      "Output Filename for writing the diagram coordinates",
+      cxxopts::value<std::string>())("t,output_triangulation",
+                                     "Output Filename for writing the delaunay "
+                                     "triangulation",
+                                     cxxopts::value<
+                                         std::string>())("h,help",
+                                                         "Print usage");
 
   auto result = options.parse(argc, argv);
 
@@ -40,7 +46,6 @@ int main(int argc, char** argv) {
   }
 
   const std::string inputFile = result["i"].as<std::string>();
-  const std::string outputFile = result["o"].as<std::string>();
 
   // read the input
   std::ifstream inputStream(inputFile);
@@ -90,24 +95,42 @@ int main(int argc, char** argv) {
             << dtEnd.number_of_hyperbolic_edges() << std::endl;
   std::cout << "Time:                       " << timer.time() << std::endl;
 
-  std::fstream outputFileStream(outputFile, std::fstream::out);
+  // Writing the diagram
+  if (result.count("o")) {
+    const std::string diagramOutputFile = result["o"].as<std::string>();
+    std::fstream diagramOutputFileStream(diagramOutputFile, std::fstream::out);
 
-  for (DelaunayTriangulation::All_faces_iterator f = dtEnd.all_faces_begin();
-       f != dtEnd.all_faces_end(); ++f) {
-    auto voronoi_vertex = dtEnd.dual(f);
-    auto x = CGAL::to_double(voronoi_vertex.x());
-    auto y = CGAL::to_double(voronoi_vertex.y());
+    for (DelaunayTriangulation::All_faces_iterator f = dtEnd.all_faces_begin();
+         f != dtEnd.all_faces_end(); ++f) {
+      auto voronoi_vertex = dtEnd.dual(f);
+      auto x = CGAL::to_double(voronoi_vertex.x());
+      auto y = CGAL::to_double(voronoi_vertex.y());
 
-    auto r = sqrt(x * x + y * y);
-    r = 2.0 * atanh(r);
-    auto angle = atan2(y, x);
+      auto r = sqrt(x * x + y * y);
+      r = 2.0 * atanh(r);
+      auto angle = atan2(y, x);
 
-    // Make sure angle is in [0, 2pi]
-    if (angle < 0.0) {
-      angle += 2 * M_PI;
+      // Make sure angle is in [0, 2pi]
+      if (angle < 0.0) {
+        angle += 2 * M_PI;
+      }
+
+      diagramOutputFileStream << r << " " << angle << "\n";
     }
+  }
 
-    outputFileStream << r << " " << angle << "\n";
+  // Writing the triangulation
+  if (result.count("t")) {
+    const std::string triangulationOutputFile = result["t"].as<std::string>();
+    std::fstream outputFileStream(triangulationOutputFile, std::fstream::out);
+    for (DelaunayTriangulation::All_edges_iterator e = dtEnd.all_edges_begin();
+         e != dtEnd.all_edges_end(); e++) {
+      DelaunayTriangulation::Face_handle f = e->first;
+      DelaunayTriangulation::Vertex_handle a = f->vertex(f->cw(e->second));
+      DelaunayTriangulation::Vertex_handle b = f->vertex(f->ccw(e->second));
+      outputFileStream << vertext_to_id[a->handle()] << " "
+                       << vertext_to_id[b->handle()] << "\n";
+    }
   }
 
   return EXIT_SUCCESS;

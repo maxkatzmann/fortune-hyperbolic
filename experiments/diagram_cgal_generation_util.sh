@@ -13,9 +13,9 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 . "$DIR/bazel_utilities"
 
 # Path to the Bazel target of the generator
-cgalUtilPath=$(rlocation "__main__/experiments/diagram_cgal_util")
+cgalUtilPath=$(rlocation "__main__/experiments/cgal_util")
 if [[ ! -f "${cgalUtilPath:-}" ]]; then
-    echo >&2 "ERROR: could not look up the diagram_cgal_util binary path."
+    echo >&2 "ERROR: could not look up the cgal_util binary path."
     exit 1
 fi
 
@@ -47,5 +47,8 @@ do
     diagramsDir="${targetDir}/diagrams-cgal"
     mkdir -p ${diagramsDir}
 
-    ${cgalUtilPath} -i ${filePath} -o ${diagramsDir}/${filename}-diagram-cgal.txt
+    triangulationsDir="${targetDir}/triangulations-cgal"
+    mkdir -p ${triangulationsDir}
+
+    ${cgalUtilPath} -i ${filePath} -o ${diagramsDir}/${filename}-diagram-cgal.txt -t ${triangulationsDir}/${filename}-triangulation-cgal.txt
 done

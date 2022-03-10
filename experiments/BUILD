@@ -6,26 +6,8 @@ load("@rules_proto//proto:defs.bzl", "proto_library")
 load("@com_google_protobuf//:protobuf.bzl", "py_proto_library")
 
 cc_binary(
-    name = "triangulation_cgal_util",
-    srcs = ["triangulation_cgal_util.cc"],
-    defines = ["CGAL_USE_CORE"],
-    deps = [
-        "//:cxxopts",
-        "@boost//:algorithm",
-        "@boost//:any",
-        "@boost//:config",
-        "@boost//:property_map",
-        "@boost//:random",
-        "@boost//:variant",
-        "@cgalinc//:headers",
-        "@gmpinc//:headers",
-        "@gmplib//:lib",
-    ],
-)
-
-cc_binary(
-    name = "diagram_cgal_util",
-    srcs = ["diagram_cgal_util.cc"],
+    name = "cgal_util",
+    srcs = ["cgal_util.cc"],
     defines = ["CGAL_USE_CORE"],
     deps = [
         "//:cxxopts",
@@ -89,8 +71,8 @@ sh_binary(
     name = "diagram_cgal_generation_util",
     srcs = ["diagram_cgal_generation_util.sh"],
     data = [
+        ":cgal_util",
         ":data",
-        ":diagram_cgal_util",
         ":projectroot",
     ],
     deps = [
