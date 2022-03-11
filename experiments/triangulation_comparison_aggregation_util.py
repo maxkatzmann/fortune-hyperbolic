@@ -25,22 +25,25 @@ def main(argv):
     write_csv_to_file(csv, args.output)
 
 
-def numbers_of_missing_edges(native_triangulation, cgal_triangulation):
-    edges_missing_in_native = 0
-    edges_missing_in_cgal = 0
-    for u, v in native_triangulation.iterEdges():
-        if cgal_triangulation.hasEdge(u, v):
-            continue
+def percent_of_covered_edges(triangulation1, triangulation2):
+    edges_from_1_covered_by_2 = 0
+    edges_from_2_covered_by_1 = 0
 
-        edges_missing_in_cgal += 1
+    edges_in_1 = 0
+    edges_in_2 = 0
+    for u, v in triangulation1.iterEdges():
+        edges_in_1 += 1
 
-    for u, v in cgal_triangulation.iterEdges():
-        if native_triangulation.hasEdge(u, v):
-            continue
+        if triangulation2.hasEdge(u, v):
+            edges_from_1_covered_by_2 += 1
 
-        edges_missing_in_native += 1
+    for u, v in triangulation2.iterEdges():
+        edges_in_2 += 1
+        if triangulation1.hasEdge(u, v):
+            edges_from_2_covered_by_1 += 1
 
-    return (edges_missing_in_native, edges_missing_in_cgal)
+    return (float(edges_from_1_covered_by_2) / float(edges_in_1),
+            float(edges_from_2_covered_by_1) / float(edges_in_2))
 
 
 def get_row_from_comparison_between(name, precision_triangulation,
@@ -48,33 +51,33 @@ def get_row_from_comparison_between(name, precision_triangulation,
     disk_radius, diagram_id = name.split('-')
     number_of_points = get_number_of_points_in_file(disk_radius, diagram_id)
 
-    edges_missing_in_precision, edges_missing_in_cgal = numbers_of_missing_edges(
+    precise_edges_covered_by_cgal, cgal_edges_covered_by_precise = percent_of_covered_edges(
         precision_triangulation, cgal_triangulation)
 
     row_values = [
-        disk_radius, diagram_id, number_of_points, edges_missing_in_precision,
-        edges_missing_in_cgal
+        disk_radius, diagram_id, number_of_points,
+        precise_edges_covered_by_cgal, cgal_edges_covered_by_precise
     ]
 
     for (precision, native_triangulation) in native_triangulations:
-        edges_missing_in_precision, edges_missing_in_native = numbers_of_missing_edges(
+        precise_edges_covered_by_native, native_edges_covered_by_precise = percent_of_covered_edges(
             precision_triangulation, native_triangulation)
 
-        row_values.append(edges_missing_in_precision)
-        row_values.append(edges_missing_in_native)
+        row_values.append(precise_edges_covered_by_native)
+        row_values.append(native_edges_covered_by_precise)
 
     return row_values
 
 
 def get_header(native_triangulations):
     header = [
-        'DiskRadius', 'DiagramID', 'NumberOfPoints',
-        'EdgesMissingPreciseFromCGAL', 'EdgesMissingCGALFromPrecise'
+        'DiskRadius', 'DiagramID', 'NumberOfPoints', 'PreciseCoveredByCGAL',
+        'CGALCoveredByPrecise'
     ]
 
     for (precision, triangulation) in native_triangulations:
-        header.append('EdgesMissingPreciseFrom' + str(precision))
-        header.append('EdgesMissing' + str(precision) + 'FromPrecise')
+        header.append('PreciseCoveredByNative-' + str(precision))
+        header.append('NativeCoveredByPrecise-' + str(precision))
 
     return header
 
