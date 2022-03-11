@@ -42,3 +42,20 @@ def get_number_of_points_in_file(disk_radius, diagram_id):
     num_lines = sum(1 for line in open(path))
 
     return num_lines
+
+
+def get_precision_from_file_name(file_name):
+    file_name_without_extension = file_name.replace('.txt', '')
+    components = file_name_without_extension.split('-')
+    return int(components[-1])
+
+
+def precision_sort(path1, path2):
+
+    precision1 = get_precision_from_file_name(path1)
+    precision2 = get_precision_from_file_name(path2)
+
+    if precision1 < precision2:
+        return -1
+    else:
+        return 1

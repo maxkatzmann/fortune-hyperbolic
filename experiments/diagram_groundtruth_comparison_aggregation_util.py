@@ -84,7 +84,7 @@ def generate_csv_from_comparisons(comparisons):
     for comparison in comparisons:
         rows += get_rows_from_comparison(comparison)
 
-    rows = sorted(rows, key=lambda x: (int(x[0]), int(x[1])))
+    rows = sorted(rows, key=lambda x: (float(x[0]), int(x[1])))
     rows = [[str(entry) for entry in row] for row in rows]
 
     header_string = ', '.join(header)

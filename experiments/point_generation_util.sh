@@ -4,11 +4,12 @@
 #
 # Usage:
 #
-#     bazel run -c opt generate_points_util -- -j 4
+#     bazel run -c opt point_generation_util -- -j 4
 
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 . "$DIR/bazel_utilities"
+. "$DIR/experiments_config"
 
 # Read command line flags
 
@@ -42,16 +43,16 @@ projectRoot=$(dirname "$readMePath")
 dataPath="${projectRoot}/data"
 mkdir -p ${dataPath}
 
-# How many samples per radius
-samples=2
+# Path to where the parameters are stored.
+parametersPath="${dataPath}/parameters.txt"
 
-for R in $(seq 3 3 30)
+while IFS="" read -r parameters || [ -n "$parameters" ]
 do
-    for sample in $(seq $samples); do
-        sem -j $jobs "${generatorPath} -R $R -o ${dataPath}/${R}-${sample}.txt"
+    parameterPair=( $parameters )
+    R=${parameterPair[0]}
+    N=${parameterPair[1]}
+    for sample in $(seq $conf_numberOfSamples); do
+        sem -j $jobs "${generatorPath} -R $R -N $N -o ${dataPath}/${R}-${sample}.txt"
     done
     sem --wait
-done
-
-
-
+done < $parametersPath

@@ -37,8 +37,8 @@ int main(int argc, char* argv[]) {
     // Number of points to be distributed
     int N = result["N"].as<int>();
 
-    if (R < 0 && N < 0) {
-      std::cerr << "At least one of R or N has to be specified.\n";
+    if (N < 0) {
+      std::cerr << "N has to be specified.\n";
       return EXIT_FAILURE;
     }
 
@@ -52,18 +52,6 @@ int main(int argc, char* argv[]) {
       double d = result["d"].as<double>();
       double alpha_fraction = alpha / (alpha - 0.5);
       R = 2.0 * log(2.0 * N / (M_PI * d) * (alpha_fraction * alpha_fraction));
-    }
-
-    // If N is not specified
-    if (N < 0) {
-      // Choose depending on R such that for R = target_R we get
-      // target_N nodes.
-      const double target_R = 30.0;
-      const double target_N = 10000000;
-
-      const double c = acosh(target_N / (2 * M_PI) + 1) / target_R;
-
-      N = 2.0 * M_PI * (cosh(c * R) - 1);
     }
 
     cout << "Using R = " << R << "\n";

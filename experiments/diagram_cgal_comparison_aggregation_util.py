@@ -2,7 +2,9 @@
 # they differ.
 #
 # Usage:
-#   bazel run -c opt experiments/diagram_cgal_comparison_aggregation_util -- --diagrams path/to/directory/containing/diagrams --output path/to/where/the/result should be stored
+#   bazel run -c opt experiments/diagram_cgal_comparison_aggregation_util -- \
+#     --diagrams path/to/directory/containing/diagrams \
+#     --output path/to/where/the/result should be stored
 #
 
 import argparse
@@ -12,7 +14,7 @@ from os import listdir
 from os.path import isdir, isfile, join
 from pathlib import Path
 
-from diagram_comparison import read_diagram, matches_between_point_sets, get_number_of_points_in_file
+from diagram_comparison import read_diagram, matches_between_point_sets, get_number_of_points_in_file, precision_sort
 
 
 def main(argv):
@@ -39,20 +41,6 @@ def get_diagram_names(results_directory):
 def get_native_precision_diagram(name, results_directory):
     diagrams_path = Path(results_directory) / name / 'diagrams'
 
-    def precision_sort(path1, path2):
-        path1WithoutExtension = path1.replace('.txt', '')
-        path2WithoutExtension = path2.replace('.txt', '')
-        components1 = path1WithoutExtension.split('-')
-        components2 = path2WithoutExtension.split('-')
-
-        precision1 = int(components1[-1])
-        precision2 = int(components2[-1])
-
-        if precision1 < precision2:
-            return -1
-        else:
-            return 1
-
     diagram_files = sorted([
         join(diagrams_path, f)
         for f in listdir(diagrams_path) if isfile(join(diagrams_path, f))
@@ -70,7 +58,7 @@ def get_cgal_diagram(name, results_directory):
 
 
 def get_row_from_comparison_between(name, diagram1, diagram2):
-    disk_radius, diagram_id = name.split('-')
+    disk_radius, diagram_id = name.split('-')[0:2]
     number_of_points = get_number_of_points_in_file(disk_radius, diagram_id)
 
     vertex_percentage = float(len(diagram2)) / float(len(diagram1))
@@ -105,7 +93,7 @@ def generate_csv_from_results(results_directory):
                                               diagram_cgal)
         rows.append(row)
 
-    rows = sorted(rows, key=lambda x: (int(x[0]), int(x[1])))
+    rows = sorted(rows, key=lambda x: (float(x[0]), int(x[1])))
     rows = [[str(entry) for entry in row] for row in rows]
 
     header_string = ', '.join(header)

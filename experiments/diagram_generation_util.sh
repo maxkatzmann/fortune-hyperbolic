@@ -10,6 +10,7 @@
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 . "$DIR/bazel_utilities"
+. "$DIR/experiments_config"
 
 # Read command line flags
 
@@ -51,6 +52,10 @@ do
     filePathWithoutExtension=${filePath%.*}
     filename=${filePathWithoutExtension##*/}
 
+    if [ $filename == "parameters" ]; then
+        continue
+    fi
+
     targetDir="${resultsPath}/${filename}"
     mkdir -p ${targetDir}
 
@@ -60,7 +65,7 @@ do
     triangulationsDir="${targetDir}/triangulations"
     mkdir -p ${triangulationsDir}
 
-    for precision in $(seq 16 16 256); do 
+    for precision in $(seq 16 16 $conf_maximumPrecision); do 
         sem -j $jobs "${voronoiUtilPath} -i ${filePath} -p ${precision} -o ${diagramsDir}/${filename}-diagram-precision-${precision}.txt -t ${triangulationsDir}/${filename}-triangulation-precision-${precision}.txt"
     done
     sem --wait

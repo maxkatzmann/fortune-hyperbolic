@@ -22,8 +22,6 @@ Voronoi cells are neighboring.
 - [GMP](https://gmplib.org)
 - [MPFR](https://www.mpfr.org)
 - [CGAL](https://www.cgal.org)
-- [Multiset](https://pypi.org/project/multiset/)
-- [Parallel](https://www.gnu.org/software/parallel/)
 
 If the libraries _GMP_, _MPFR_, and _CGAL_ are not are not installed
 in their default locations `/usr/local/opt/...`, the `path` variables

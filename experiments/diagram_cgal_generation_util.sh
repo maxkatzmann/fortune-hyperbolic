@@ -12,6 +12,18 @@ DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 . "$DIR/bazel_utilities"
 
+# Read command line flags
+
+# By default we perform all jobs sequentally -> 1 job at the time.
+jobs=1
+while getopts j: flag
+do
+    case "${flag}" in
+        j) jobs=${OPTARG};;
+    esac
+done
+echo "Using: $jobs jobs in parallel";
+
 # Path to the Bazel target of the generator
 cgalUtilPath=$(rlocation "__main__/experiments/cgal_util")
 if [[ ! -f "${cgalUtilPath:-}" ]]; then
@@ -50,5 +62,6 @@ do
     triangulationsDir="${targetDir}/triangulations-cgal"
     mkdir -p ${triangulationsDir}
 
-    ${cgalUtilPath} -i ${filePath} -o ${diagramsDir}/${filename}-diagram-cgal.txt -t ${triangulationsDir}/${filename}-triangulation-cgal.txt
+    sem -j $jobs "${cgalUtilPath} -i ${filePath} -o ${diagramsDir}/${filename}-diagram-cgal.txt -t ${triangulationsDir}/${filename}-triangulation-cgal.txt"
 done
+sem --wait

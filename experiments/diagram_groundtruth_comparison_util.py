@@ -14,7 +14,7 @@ from os.path import isfile, join
 from pathlib import Path
 
 from experiments.diagram_groundtruth_comparison_pb2 import Comparison
-from diagram_comparison import read_diagram, matches_between_point_sets, get_number_of_points_in_file
+from diagram_comparison import read_diagram, matches_between_point_sets, get_number_of_points_in_file, precision_sort
 
 
 def main(argv):
@@ -32,20 +32,6 @@ def main(argv):
     args = parser.parse_args(argv[1:])
 
     diagrams_path = args.diagrams
-
-    def precision_sort(path1, path2):
-        path1WithoutExtension = path1.replace('.txt', '')
-        path2WithoutExtension = path2.replace('.txt', '')
-        components1 = path1WithoutExtension.split('-')
-        components2 = path2WithoutExtension.split('-')
-
-        precision1 = int(components1[-1])
-        precision2 = int(components2[-1])
-
-        if precision1 < precision2:
-            return -1
-        else:
-            return 1
 
     diagram_files = sorted([
         join(diagrams_path, f)
@@ -97,7 +83,7 @@ def get_parameters_from_file_path(file_path):
     file_name = Path(file_path).name
     file_name = file_name.replace('.txt', '')
     file_name_components = file_name.split('-')
-    return (int(file_name_components[0]), int(file_name_components[1]),
+    return (float(file_name_components[0]), int(file_name_components[1]),
             int(file_name_components[-1]))
 
 

@@ -4,7 +4,7 @@ package experiments;
 
 message Comparison {
   // The radius of the disk containing the points
-  int32 diskRadius = 1; 
+  double diskRadius = 1; 
   // The identifier of the diagram
   int32 diagram = 2; 
   // The number of points in the diagram

@@ -5,7 +5,7 @@
 #
 # Usage:
 #
-#     bazel run -c opt generate_ground_truth_comparison_util
+#     bazel run -c opt diagram_groundtruth_comparison_generation_util
 
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
@@ -36,6 +36,11 @@ resultsPath="${projectRoot}/results"
 mkdir -p ${resultsPath}
 
 for filePath in ${resultsPath}/*; do
+    if ! [ -d "$filePath" ]; then
+        # $filePath is not a directory
+        continue
+    fi
+
     # filePathWithoutExtension=${filePath%.*}
     dirname=${filePath##*/}
 
