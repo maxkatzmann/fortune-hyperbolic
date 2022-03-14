@@ -4,7 +4,7 @@
 #
 # Usage:
 #
-#     bazel run -c opt point_generation_util -- -j 4
+#     bazel run -c opt site_generation_util -- -j 4
 
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi

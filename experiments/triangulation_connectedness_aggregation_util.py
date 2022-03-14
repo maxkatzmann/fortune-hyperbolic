@@ -51,7 +51,7 @@ def get_row_from_comparison_between(name, native_triangulation,
 
 def get_header():
     return [
-        'DiskRadius', 'DiagramID', 'NumberOfPoints', 'NativeComponents',
+        'DiskRadius', 'DiagramID', 'NumberOfSites', 'NativeComponents',
         'CGALComponents'
     ]
 

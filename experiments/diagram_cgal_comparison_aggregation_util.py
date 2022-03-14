@@ -75,7 +75,7 @@ def get_row_from_comparison_between(name, diagram1, diagram2):
 
 def get_header():
     return [
-        'DiskRadius', 'DiagramID', 'NumberOfPoints', 'VertexPercentage',
+        'DiskRadius', 'DiagramID', 'NumberOfSites', 'VertexPercentage',
         'MatchingPercentage'
     ]
 

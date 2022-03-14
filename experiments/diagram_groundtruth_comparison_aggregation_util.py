@@ -73,7 +73,7 @@ def get_rows_from_comparison(comparison):
 
 def get_header():
     return [
-        'DiskRadius', 'DiagramID', 'NumberOfPoints', 'Precision',
+        'DiskRadius', 'DiagramID', 'NumberOfSites', 'Precision',
         'VertexPercentage', 'MatchingPercentage'
     ]
 

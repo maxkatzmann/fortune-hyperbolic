@@ -17,8 +17,8 @@ conf_slopeFactor=1
 conf_numberOfSites=100000
 
 # The number of samples per disk radius that are considered.
-conf_numberOfSamples=2
+conf_numberOfSamples=10
 
 # The maximum precision in bits we consider. This should be a multiple
 # of 16 in [16, 256].
-conf_maximumPrecision=64
+conf_maximumPrecision=128

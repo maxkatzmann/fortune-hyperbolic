@@ -3,7 +3,7 @@
 import argparse
 import sys
 
-from diagram_comparison import get_number_of_points_in_file, get_precision_from_file_name
+from diagram_comparison import get_number_of_points_in_file
 from triangulation_comparison import get_triangulation_names, get_native_precision_triangulation, get_cgal_triangulation, get_native_triangulations
 
 
@@ -71,7 +71,7 @@ def get_row_from_comparison_between(name, precision_triangulation,
 
 def get_header(native_triangulations):
     header = [
-        'DiskRadius', 'DiagramID', 'NumberOfPoints', 'PreciseCoveredByCGAL',
+        'DiskRadius', 'DiagramID', 'NumberOfSites', 'PreciseCoveredByCGAL',
         'CGALCoveredByPrecise'
     ]
 

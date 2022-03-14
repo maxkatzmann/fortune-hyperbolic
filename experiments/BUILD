@@ -21,16 +21,16 @@ sh_binary(
 )
 
 py_binary(
-    name = "point_parameters_util",
-    srcs = ["point_parameters_util.py"],
+    name = "site_parameters_util",
+    srcs = ["site_parameters_util.py"],
 )
 
 sh_binary(
-    name = "point_parameters_generation_util",
-    srcs = ["point_parameters_generation_util.sh"],
+    name = "site_parameters_generation_util",
+    srcs = ["site_parameters_generation_util.sh"],
     data = [
-        ":point_parameters_util",
         ":projectroot",
+        ":site_parameters_util",
     ],
     deps = [
         ":bazel_utilities",
@@ -45,8 +45,8 @@ filegroup(
 )
 
 sh_binary(
-    name = "point_generation_util",
-    srcs = ["point_generation_util.sh"],
+    name = "site_generation_util",
+    srcs = ["site_generation_util.sh"],
     data = [
         ":parameter_data",
         ":projectroot",

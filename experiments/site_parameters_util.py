@@ -1,7 +1,11 @@
 # A utility to generate the radii of the disks we consider in our experiments.
 #
 # Usage:
-#   bazel run -c opt radii_util -- --maximum_radius 30 --steps 10
+#   bazel run -c opt site_parameters_util -- \
+#     --maximum_radius 30 \
+#     --steps 10 \
+#     --number_of_sites 100000 \
+#     --slope_factor 1
 
 import argparse
 import sys

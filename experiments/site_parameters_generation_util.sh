@@ -4,7 +4,7 @@
 #
 # Usage:
 #
-#     bazel run -c opt radii_generation_util -- -j 4
+#     bazel run -c opt site_parameters_generation_util -- -j 4
 
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
@@ -14,9 +14,9 @@ if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 # Read command line flags
 
 # Path to the Bazel target of the generator
-parametersUtilPath=$(rlocation "__main__/experiments/point_parameters_util")
+parametersUtilPath=$(rlocation "__main__/experiments/site_parameters_util")
 if [[ ! -f "${parametersUtilPath:-}" ]]; then
-    echo >&2 "ERROR: could not look up the point_parameters_util binary path."
+    echo >&2 "ERROR: could not look up the site_parameters_util binary path."
     exit 1
 fi
 

@@ -10,10 +10,10 @@ do
 done
 
 # Generate the parameters for the point set generation.
-bazel run -c opt //experiments:point_parameters_generation_util
+bazel run -c opt //experiments:site_parameters_generation_util
 
 # Generate the point sets.
-bazel run -c opt //experiments:point_generation_util -- -j $jobs
+bazel run -c opt //experiments:site_generation_util -- -j $jobs
 
 # Generate native diagrams and triangulations.
 bazel run -c opt //experiments:diagram_generation_util -- -j $jobs
