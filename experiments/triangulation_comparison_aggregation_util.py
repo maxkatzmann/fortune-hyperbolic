@@ -46,44 +46,47 @@ def percent_of_covered_edges(triangulation1, triangulation2):
             float(edges_from_2_covered_by_1) / float(edges_in_2))
 
 
-def get_row_from_comparison_between(name, precision_triangulation,
-                                    native_triangulations, cgal_triangulation):
+def get_rows_from_comparison_between(name, precision_triangulation,
+                                     native_triangulations,
+                                     cgal_triangulation):
+    rows = []
     disk_radius, diagram_id = name.split('-')
     number_of_points = get_number_of_points_in_file(disk_radius, diagram_id)
 
     precise_edges_covered_by_cgal, cgal_edges_covered_by_precise = percent_of_covered_edges(
         precision_triangulation, cgal_triangulation)
 
-    row_values = [
-        disk_radius, diagram_id, number_of_points,
+    cgal_row = [
+        disk_radius, diagram_id, number_of_points, "CGAL",
         precise_edges_covered_by_cgal, cgal_edges_covered_by_precise
     ]
+
+    rows.append(cgal_row)
 
     for (precision, native_triangulation) in native_triangulations:
         precise_edges_covered_by_native, native_edges_covered_by_precise = percent_of_covered_edges(
             precision_triangulation, native_triangulation)
 
-        row_values.append(precise_edges_covered_by_native)
-        row_values.append(native_edges_covered_by_precise)
+        row = [
+            disk_radius, diagram_id, number_of_points, precision,
+            precise_edges_covered_by_native, native_edges_covered_by_precise
+        ]
+        rows.append(row)
 
-    return row_values
+    return rows
 
 
-def get_header(native_triangulations):
+def get_header():
     header = [
-        'DiskRadius', 'DiagramID', 'NumberOfSites', 'PreciseCoveredByCGAL',
-        'CGALCoveredByPrecise'
+        'DiskRadius', 'DiagramID', 'NumberOfSites', 'Precision',
+        'PreciseCoveredByTechnique', 'TechniqueCoveredByPrecise'
     ]
-
-    for (precision, triangulation) in native_triangulations:
-        header.append('PreciseCoveredByNative-' + str(precision))
-        header.append('NativeCoveredByPrecise-' + str(precision))
 
     return header
 
 
 def generate_csv_from_results(results_directory):
-    header = []
+    header = get_header()
     rows = []
 
     triangulation_names = get_triangulation_names(results_directory)
@@ -92,20 +95,18 @@ def generate_csv_from_results(results_directory):
             triangulation_name, results_directory)
         triangulations_native = get_native_triangulations(
             triangulation_name, results_directory)
-        header = get_header(triangulations_native)
         triangulation_cgal = get_cgal_triangulation(triangulation_name,
                                                     results_directory)
-        row = get_row_from_comparison_between(triangulation_name,
-                                              triangulation_precise,
-                                              triangulations_native,
-                                              triangulation_cgal)
-        rows.append(row)
+        compare_rows = get_rows_from_comparison_between(
+            triangulation_name, triangulation_precise, triangulations_native,
+            triangulation_cgal)
+        rows += compare_rows
 
     rows = sorted(rows, key=lambda x: (float(x[0]), int(x[1])))
     rows = [[str(entry) for entry in row] for row in rows]
 
-    header_string = ', '.join(header)
-    row_strings = [', '.join(row) for row in rows]
+    header_string = ','.join(header)
+    row_strings = [','.join(row) for row in rows]
     return '\n'.join([header_string, *row_strings])
 
 

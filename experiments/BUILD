@@ -4,6 +4,7 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 load("@com_google_protobuf//:protobuf.bzl", "py_proto_library")
+load("@com_grail_rules_r//R:defs.bzl", "r_binary")
 
 filegroup(
     name = "projectroot",
@@ -188,6 +189,21 @@ py_binary(
     deps = [":diagram_groundtruth_comparison_py_proto"],
 )
 
+filegroup(
+    name = "result_tables",
+    srcs = glob(
+        ["results/*.csv"],
+    ),
+)
+
+r_binary(
+    name = "voronoi_vertex_comparison_plot_util",
+    src = "voronoi_vertex_comparison_plot_util.R",
+    data = [
+        ":result_tables",
+    ],
+)
+
 py_binary(
     name = "diagram_cgal_comparison_aggregation_util",
     srcs = ["diagram_cgal_comparison_aggregation_util.py"],
@@ -204,6 +220,18 @@ py_library(
     srcs = ["triangulation_comparison.py"],
     deps = [
         ":diagram_comparison",
+    ],
+)
+
+py_binary(
+    name = "triangulation_comparison_util",
+    srcs = ["triangulation_comparison_util.py"],
+    data = [
+        ":result_triangulations",
+        ":result_triangulations_cgal",
+    ],
+    deps = [
+        ":triangulation_comparison",
     ],
 )
 
@@ -232,5 +260,47 @@ py_binary(
     deps = [
         ":diagram_comparison",
         ":triangulation_comparison",
+    ],
+)
+
+py_binary(
+    name = "triangulation_comparison_visualization_util",
+    srcs = ["triangulation_comparison_visualization_util.py"],
+    data = [
+        ":data",
+        ":result_triangulations",
+        ":result_triangulations_cgal",
+    ],
+)
+
+r_binary(
+    name = "delaunay_edge_comparison_plot_util",
+    src = "delaunay_edge_comparison_plot_util.R",
+    data = [
+        ":result_tables",
+    ],
+)
+
+r_binary(
+    name = "plot_util",
+    src = "plot_util.R",
+    data = [
+        ":result_tables",
+    ],
+)
+
+sh_binary(
+    name = "plot_generation_util",
+    srcs = ["plot_generation_util.sh"],
+    data = [
+        ":delaunay_edge_comparison_plot_util",
+        ":plot_util",
+        ":projectroot",
+        ":result_tables",
+        ":voronoi_vertex_comparison_plot_util",
+    ],
+    deps = [
+        ":bazel_utilities",
+        "@bazel_tools//tools/bash/runfiles",
     ],
 )
