@@ -55,7 +55,7 @@ ggplot(tbl, aes(
     ) +
     scale_y_continuous(labels = scales::percent, limits = c(axis_cut, 1.0))
 
-plot_output_path <- paste(plot_output_dir, "delaunay-edge-comparisons.pdf", sep = "/")
+plot_output_path <- paste(plot_output_dir, "delaunay-edge-comparisons-only.pdf", sep = "/")
 ggsave(plot_output_path)
 
 print(filter(tbl, PreciseCoveredByTechnique < axis_cut))

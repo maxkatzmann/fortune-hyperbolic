@@ -59,7 +59,7 @@ ggplot(tbl, aes(x = reorder(DiskRadius, sort(as.numeric(DiskRadius))), y = Match
     ) +
     scale_y_continuous(labels = scales::percent, limits = c(axis_cut, 1.0))
 
-plot_output_path <- paste(plot_output_dir, "voronoi-vertex-comparisons.pdf", sep = "/")
+plot_output_path <- paste(plot_output_dir, "voronoi-vertex-comparisons-only.pdf", sep = "/")
 ggsave(plot_output_path)
 
 print(filter(tbl, MatchingPercentage < axis_cut))
