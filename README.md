@@ -13,7 +13,7 @@ red lines are the Delaunay triangulation that connects points whose
 Voronoi cells are neighboring.
 
 <p align="center">
-<img src="example/voronoi_example.png" width="600" height="600" />
+<img src="example/voronoi_example.png" width="500" height="300" />
 </p>
 
 ## Prerequisites
