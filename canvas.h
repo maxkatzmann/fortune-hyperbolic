@@ -70,6 +70,30 @@ namespace hyperbolic {
                 (std::abs(sin(p.theta)*p.r*scale) + offset.y > options.height);
         }
 
+      void render_native_edge(Point<double>* from, Point<double>* to, std::vector<CartesianPoint>& p, bool ccw=true) const {
+            const double dt = options.resolution * scale;
+            double t = 0.0;
+            const double t_end = (to) ? distance<double>(*to, *from) : DBL_MAX;
+
+            const double rotationAngle1 = -from->theta;
+            const double translationDistance = -from->r;
+
+            Point<double> rotatedTo = rotate(*to, rotationAngle1);
+            Point<double> translatedTo = translate(rotatedTo, translationDistance);
+            const double rotationAngle2 = -translatedTo.theta;
+
+            while (t < t_end) {
+              Point<double> p_t(t, 0.0);
+              Point<double> p_t_rotated = rotate(p_t, -rotationAngle2);
+              Point<double> p_t_translated = translate(p_t_rotated, -translationDistance);
+              Point<double> p_t_final = rotate(p_t_translated, -rotationAngle1);
+
+              p.emplace_back(p_t_final);
+              t += dt;
+            }
+            p.emplace_back(*to);
+        }
+
         void render_edge(Point<double>* from, Point<double>* to, HyperboloidBisector<double>& b, list<CartesianPoint>& p, bool ccw=true) const {
             double dt = options.resolution * scale;
             Point u_native(b.u);
@@ -151,7 +175,12 @@ namespace hyperbolic {
 
                 if (options.draw_delaunay) {
                     p.clear();
-                    add_delaunay_edge(*e, p);
+                    // add_delaunay_edge(*e, p);
+
+                    std::vector<CartesianPoint> renderPoints;
+                    render_native_edge(&(e->siteA.point), &(e->siteB.point), renderPoints, e->edgeType == EdgeType::CCW);
+                    p.insert(p.begin(), renderPoints.begin(), renderPoints.end());
+
                     svg_path_representation(p, path_representation, options.delaunay_edge_color);
                     svg_representation += path_representation;
                 }
@@ -177,7 +206,13 @@ namespace hyperbolic {
         }
 
         void svg_background_representation(string& background_representation, const string& color) const {
-            background_representation = R"(<rect width="100%" height="100%" fill=")" + color + "\"/>";
+          background_representation = "<rect width=\"" +
+            std::to_string(options.width) +
+            "\" height=\"" +
+            std::to_string(options.height) +
+            "\" fill=\"" +
+            color +
+            "\"/>";
         }
 
         void svg_path_representation(const Path& path, string& path_representation, const string& color="black") const {

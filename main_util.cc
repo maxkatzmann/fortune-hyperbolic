@@ -189,6 +189,7 @@ int main(int argc, char* argv[]) {
 
     VoronoiCanvasOptions canvas_options;
     canvas_options.width = 500;
+    canvas_options.resolution = 0.001;
     VoronoiCanvas canvas(v, sites);
 
     // Diagram

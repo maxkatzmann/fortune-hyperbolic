@@ -85,6 +85,116 @@ namespace hyperbolic {
         return acosh(x);
     };
 
+  template <typename _float_T>
+  Point<_float_T> translate(Point<_float_T>& p, _float_T d) {
+    if (d == 0.0) {
+      return p;
+    }
+
+    Point<_float_T> resultP(p.r, p.theta);
+    
+    // Depending on whether or not this point lies on the x-axis, we
+    // have to do different things.
+    if (p.theta != M_PI && p.theta != 0.0) {
+      // Get a copy of the original point.
+      Point<_float_T> originalPoint(p.r, p.theta);
+      
+      // Determine the reference point used for the translation.
+      Point<_float_T> referencePoint(fabs(d), 0.0);
+      
+      if (d > 0.0) {
+        referencePoint.theta = M_PI;
+      }
+      
+      // If the coordinate is below the x-axis, we mirror the point,
+      // on the x-axis, which makes things easier.
+      if (originalPoint.theta > M_PI) {
+        resultP.theta = (2.0 * M_PI - p.theta);
+      }
+      
+      // Zeta is a value derived from the curvature, needed for the below
+      // computations.
+      const _float_T zeta = -1.0;
+      
+      // The radial coordinate is simply the distance between the
+      // reference point and the coordinate.
+      double radialCoordinate = distance(resultP, referencePoint);
+      
+      // Determine the angular coordinate.
+      double angularCoordinate = 0.0;
+      
+      double enumerator = (std::cosh(zeta * std::fabs(d)) *
+                           std::cosh(zeta * radialCoordinate)) -
+        std::cosh(zeta * resultP.r);
+      double denominator = std::sinh(zeta * std::fabs(d)) *
+        std::sinh(zeta * radialCoordinate);
+      
+      try {
+        angularCoordinate = std::acos(enumerator / denominator);
+      } catch (std::domain_error &de) {
+      }
+      
+      if (std::isnan(angularCoordinate)) {
+        angularCoordinate = 0.0;
+      }
+      
+      if (d < 0.0) {
+        angularCoordinate = M_PI - angularCoordinate;
+      }
+      
+      // Assign the new values, which are the result of the
+      // translation.
+      resultP.r = radialCoordinate;
+      resultP.theta = angularCoordinate;
+      
+      // Mirror back on the x-axis.
+      if (originalPoint.theta > M_PI) {
+        resultP.theta = 2.0 * M_PI - resultP.theta;
+      }
+      
+    } else {
+      // The coordinate does lie on the x-axis so the translation only
+      // moves it along the axis.
+      if (p.theta == 0.0) {
+        // When we translate to far, we pass the origin and are on the
+        // other side.
+        if (p.r + d < 0.0) {
+          resultP.theta = M_PI;
+        }
+        
+        resultP.r = std::fabs(resultP.r + d);
+      } else {
+        // If we move to far, we pass the origin and are on the other
+        // side.
+        if (resultP.r - d < 0.0) {
+          resultP.theta = 0.0;
+        }
+        
+        resultP.r = std::fabs(resultP.r - d);
+      }
+    }
+
+    return resultP;
+  }
+
+  template <typename _float_T>
+  Point<_float_T> rotate(Point<_float_T>& p, _float_T angle) {
+    Point<_float_T> resultP(p.r, p.theta);
+
+    resultP.theta += angle;
+
+    while (resultP.theta < 0.0) {
+      resultP.theta += 2.0 * M_PI;
+    }
+
+    while (resultP.theta > 2.0 * M_PI) {
+      resultP.theta -= 2.0 * M_PI;
+    }
+
+    return resultP;
+  }
+
+
     /*
      * struct representing a cosine function for geometric calculations
      * */
