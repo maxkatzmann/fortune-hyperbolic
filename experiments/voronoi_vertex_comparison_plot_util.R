@@ -9,10 +9,10 @@ plot_output_dir <- args[1]
 
 
 ## read the table
-precision_tbl <- read.csv("experiments/results/diagrams-groundtruth-comparison.csv",
+precision_tbl <- read.csv("experiments/results/diagrams-groundtruth-comparisons.csv",
     sep = ","
 )
-cgal_tbl <- read.csv("experiments/results/diagrams-cgal-comparison.csv",
+cgal_tbl <- read.csv("experiments/results/diagrams-cgal-comparisons.csv",
     sep = ","
 )
 precision_column <- rep("CGAL", nrow(cgal_tbl))

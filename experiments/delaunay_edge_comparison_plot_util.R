@@ -9,7 +9,7 @@ plot_output_dir <- args[1]
 
 
 ## read the table
-tbl <- read.csv("experiments/results/triangulation-edge-comparison.csv",
+tbl <- read.csv("experiments/results/triangulation-edge-comparisons.csv",
     sep = ","
 )
 str(tbl)

@@ -21,8 +21,8 @@ latex_percent <- function(x) {
 #### PART I: Comparing Voronoi Vertices
 
 ## read the table
-precision_voronoi_tbl <- read.csv("experiments/results/diagrams-groundtruth-comparison.csv", sep = ",")
-cgal_voronoi_tbl <- read.csv("experiments/results/diagrams-cgal-comparison.csv", sep = ",")
+precision_voronoi_tbl <- read.csv("experiments/results/diagrams-groundtruth-comparisons.csv", sep = ",")
+cgal_voronoi_tbl <- read.csv("experiments/results/diagrams-cgal-comparisons.csv", sep = ",")
 precision_column <- rep("CGAL", nrow(cgal_voronoi_tbl))
 cgal_voronoi_tbl$Precision <- factor(precision_column)
 
@@ -152,7 +152,7 @@ dev.off()
 
 #### PART II: Comparing Delaunay Edges
 
-delaunay_tbl <- read.csv("experiments/results/triangulation-edge-comparison.csv",
+delaunay_tbl <- read.csv("experiments/results/triangulation-edge-comparisons.csv",
     sep = ","
 )
 

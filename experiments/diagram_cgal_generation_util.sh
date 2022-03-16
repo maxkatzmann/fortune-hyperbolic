@@ -53,6 +53,10 @@ do
     filePathWithoutExtension=${filePath%.*}
     filename=${filePathWithoutExtension##*/}
 
+    if [ $filename == "parameters" ]; then
+        continue
+    fi
+
     targetDir="${resultsPath}/${filename}"
     mkdir -p ${targetDir}
 
