@@ -106,7 +106,7 @@ voronoi_plot <- ggplot(
     ) +
     labs(
         x = "Disk Radius",
-        y = "Matching Voronoi Vetices",
+        y = "Matching Voronoi Vertices",
         color = "Technique"
     ) +
     theme(
