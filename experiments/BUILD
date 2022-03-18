@@ -304,3 +304,25 @@ sh_binary(
         "@bazel_tools//tools/bash/runfiles",
     ],
 )
+
+r_binary(
+    name = "consistency_analysis_util",
+    src = "consistency_analysis_util.R",
+    data = [
+        ":result_tables",
+    ],
+)
+
+sh_binary(
+    name = "consistency_analysis_generation_util",
+    srcs = ["consistency_analysis_generation_util.sh"],
+    data = [
+        ":consistency_analysis_util",
+        ":projectroot",
+        ":result_tables",
+    ],
+    deps = [
+        ":bazel_utilities",
+        "@bazel_tools//tools/bash/runfiles",
+    ],
+)

@@ -38,3 +38,7 @@ bazel run -c opt //experiments:triangulation_comparison_aggregation_util -- --re
 
 # Finally, we also generate the plots.
 bazel run -c opt //experiments:plot_generation_util
+
+# Generate consistency analsysis results.
+bazel run -c opt //experiments:consistency_analysis_generation_util
+
