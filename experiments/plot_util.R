@@ -6,6 +6,7 @@ library(tikzDevice)
 library(stringr)
 library(formattable)
 library(ggpubr)
+library(scales)
 
 theme_set(theme_bw())
 
@@ -18,6 +19,14 @@ latex_percent <- function(x) {
     stringr::str_c(format(x * 100), "\\%")
 }
 
+ks <- function(x) {
+    number_format(
+        accuracy = 1,
+        scale = 1 / 1000,
+        suffix = "k",
+    )(digits(x, 0))
+}
+
 #### PART I: Comparing Voronoi Vertices
 
 ## read the table
@@ -26,7 +35,7 @@ cgal_voronoi_tbl <- read.csv("experiments/results/diagrams-cgal-comparisons.csv"
 precision_column <- rep("CGAL", nrow(cgal_voronoi_tbl))
 cgal_voronoi_tbl$Precision <- factor(precision_column)
 
-selected_columns <- c("DiskRadius", "DiagramID", "Precision", "MatchingPercentage")
+selected_columns <- c("DiskRadius", "DiagramID", "Precision", "MatchingPercentage", "NonMatchingAbsolute")
 voronoi_tbl <- precision_voronoi_tbl[selected_columns]
 cgal_addendum <- cgal_voronoi_tbl[selected_columns]
 voronoi_tbl <- rbind(voronoi_tbl, cgal_addendum)
@@ -138,7 +147,6 @@ voronoi_plot_output_path <- paste(plot_output_dir,
     sep = "/"
 )
 
-
 ggsave(voronoi_plot_output_path,
     height = height,
     width = width
@@ -148,6 +156,86 @@ ggsave(voronoi_plot_output_path,
 print(voronoi_plot)
 # Necessary to close or the tikxDevice .tex file will not be written
 dev.off()
+
+
+#### PART I A: Comparting Voronoi Vertices Absolute
+
+breaks <- c(0, 1000, 10000, 100000)
+labels <- c(0, "1k", "10k", "100k")
+limits <- c(0, 100005)
+
+absolute_axis_cut <- 10000
+absolute_voronoi_plot <- ggplot(
+    voronoi_tbl,
+    aes(
+        x = reorder(
+            DiskRadius,
+            sort(as.numeric(DiskRadius))
+        ),
+        y = NonMatchingAbsolute
+    )
+) +
+    geom_boxplot(aes(
+        fill = factor(Precision,
+            levels = precision_levels
+        ),
+        color = factor(Precision,
+            levels = precision_levels
+        )
+    ),
+    outlier.shape = 1,
+    outlier.size = 0.75,
+    ) +
+    scale_fill_manual(
+        values = light_colors,
+        guide = "none"
+    ) +
+    scale_color_manual(
+        values = colors,
+        labels = precision_labels
+    ) +
+    labs(
+        x = "Disk Radius",
+        y = "Non-Matching Voronoi Vertices",
+        color = "Technique"
+    ) +
+    theme(
+        legend.position = c(0.175, 0.35),
+        legend.key.height = unit(0.4, "cm"),
+        legend.key.width = unit(0.25, "cm"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 7),
+        axis.text = element_text(color = "black"),
+        axis.text.x = element_text(
+            size = 7,
+            color = "black",
+            angle = 90,
+            vjust = 0.5,
+            hjust = 1
+        ),
+        axis.text.y = element_text(size = 6, color = "black"),
+        axis.title.y = element_text(margin = margin(t = 0.0, r = 0.0, b = 0.0, l = 0.0)),
+        axis.title = element_text(size = 9),
+        legend.margin = margin(5, 0, 0, 0),
+    ) +
+    scale_y_continuous(
+        trans = scales::pseudo_log_trans(base = 10),
+        breaks = breaks,
+        labels = labels,
+        limits = limits
+    )
+
+absolute_voronoi_plot_output_path <- paste(plot_output_dir,
+    "voronoi-vertex-comparisons-absolute.pdf",
+    sep = "/"
+)
+
+ggsave(absolute_voronoi_plot_output_path,
+    height = height,
+    width = width
+)
+
+## print(filter(voronoi_tbl, NonMatchingAbsolute > absolute_axis_cut))
 
 
 #### PART II: Comparing Delaunay Edges
@@ -246,7 +334,80 @@ print(delaunay_plot)
 # Necessary to close or the tikxDevice .tex file will not be written
 dev.off()
 
-#### Part II: Merge
+#### Part II A: Delaunay Absolute
+
+absolute_delaunay_plot <- ggplot(
+    delaunay_tbl,
+    aes(
+        x = reorder(
+            DiskRadius,
+            sort(as.numeric(DiskRadius))
+        ),
+        y = AbsoluteMissingInTechnique
+    )
+) +
+    geom_boxplot(aes(
+        fill = factor(Precision,
+            levels = precision_levels
+        ),
+        color = factor(Precision,
+            levels = precision_levels
+        )
+    ),
+    outlier.shape = 1,
+    outlier.size = 0.75
+    ) +
+    scale_fill_manual(
+        values = light_colors,
+        guide = "none"
+    ) +
+    scale_color_manual(
+        values = colors,
+        labels = precision_labels
+    ) +
+    labs(
+        x = "Disk Radius",
+        y = "Missing Edges",
+        color = "Technique"
+    ) +
+    theme(
+        legend.position = c(0.175, 0.35),
+        legend.key.height = unit(0.4, "cm"),
+        legend.key.width = unit(0.25, "cm"),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 7),
+        axis.text = element_text(color = "black"),
+        axis.text.x = element_text(
+            size = 7,
+            color = "black",
+            angle = 90,
+            vjust = 0.5,
+            hjust = 1
+        ),
+        axis.text.y = element_text(size = 6, color = "black"),
+        axis.title.y = element_text(margin = margin(t = 0.0, r = 0.0, b = 0.0, l = 0.0)),
+        axis.title = element_text(size = 9),
+    ) +
+    scale_y_continuous(
+        trans = scales::pseudo_log_trans(base = 10),
+        breaks = breaks,
+        labels = labels,
+        limits = limits
+    )
+
+
+absolute_delaunay_plot_output_path <- paste(plot_output_dir,
+    "delaunay-edge-comparisons-absolute.pdf",
+    sep = "/"
+)
+
+ggsave(absolute_delaunay_plot_output_path,
+    height = height,
+    width = width
+)
+
+
+#### Part III: Merge
 
 merged_tex_output_path <- paste(plot_output_dir,
     "merged-comparisons.tex",
@@ -278,3 +439,33 @@ print(filter(voronoi_tbl, MatchingPercentage < axis_cut))
 
 print("Delaunay Discarded Values")
 print(filter(delaunay_tbl, PreciseCoveredByTechnique < axis_cut))
+
+
+#### Part III A: Merge Absolute
+
+merged_absolute_tex_output_path <- paste(plot_output_dir,
+    "merged-absolute-comparisons.tex",
+    sep = "/"
+)
+tikz(file = merged_absolute_tex_output_path, width = width, height = height)
+
+merged_absolute_plot <- ggarrange(absolute_voronoi_plot,
+    absolute_delaunay_plot,
+    ncol = 2,
+    common.legend = TRUE
+)
+
+merged_absolute_plot_output_path <- paste(plot_output_dir,
+    "merged-absolute-comparisons.pdf",
+    sep = "/"
+)
+
+ggsave(merged_absolute_plot_output_path,
+    height = height,
+    width = width
+)
+
+# This line is only necessary if you want to preview the plot right after compiling
+print(merged_absolute_plot)
+# Necessary to close or the tikxDevice .tex file will not be written
+dev.off()

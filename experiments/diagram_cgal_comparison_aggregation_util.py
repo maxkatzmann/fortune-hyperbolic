@@ -68,15 +68,23 @@ def get_row_from_comparison_between(name, diagram1, diagram2):
         len(diagram1))
 
     return [
-        disk_radius, diagram_id, number_of_points, vertex_percentage,
-        match_percentage
+        disk_radius,
+        diagram_id,
+        number_of_points,
+        vertex_percentage,
+        match_percentage,
+        len(diagram1) - number_of_matching_vertices,
     ]
 
 
 def get_header():
     return [
-        'DiskRadius', 'DiagramID', 'NumberOfSites', 'VertexPercentage',
-        'MatchingPercentage'
+        'DiskRadius',
+        'DiagramID',
+        'NumberOfSites',
+        'VertexPercentage',
+        'MatchingPercentage',
+        'NonMatchingAbsolute',
     ]
 
 

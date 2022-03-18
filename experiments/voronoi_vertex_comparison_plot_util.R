@@ -18,7 +18,7 @@ cgal_tbl <- read.csv("experiments/results/diagrams-cgal-comparisons.csv",
 precision_column <- rep("CGAL", nrow(cgal_tbl))
 cgal_tbl$Precision <- factor(precision_column)
 
-selected_columns <- c("DiskRadius", "DiagramID", "Precision", "MatchingPercentage")
+selected_columns <- c("DiskRadius", "DiagramID", "Precision", "MatchingPercentage", "NonMatchingAbsolute")
 tbl <- precision_tbl[selected_columns]
 cgal_addendum <- cgal_tbl[selected_columns]
 tbl <- rbind(tbl, cgal_addendum)
@@ -63,3 +63,38 @@ plot_output_path <- paste(plot_output_dir, "voronoi-vertex-comparisons-only.pdf"
 ggsave(plot_output_path)
 
 print(filter(tbl, MatchingPercentage < axis_cut))
+
+absolute_plot_output_path <- paste(plot_output_dir, "voronoi-vertex-comparisons-absolute-only.pdf", sep = "/")
+absolute_axis_cut <- 10000
+ggplot(tbl, aes(x = reorder(DiskRadius, sort(as.numeric(DiskRadius))), y = NonMatchingAbsolute)) +
+    geom_boxplot(aes(
+        fill = factor(Precision, levels = precision_levels),
+        color = factor(Precision, levels = precision_levels)
+    )) +
+    scale_fill_hue(c = 30, l = 100, guide = "none") +
+    labs(
+        x = "Disk Radius",
+        y = "Non-Matching Voronoi Vetices",
+        color = "Technique"
+    ) +
+    scale_color_hue(labels = c(
+        "CGAL (Converted)",
+        "Native (Double)",
+        "Native (32)",
+        "Native (48)",
+        "Native (64)",
+        "Native (80)",
+        "Native (96)",
+        "Native (112)"
+        )) +
+    theme(
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+        legend.position = c(0.16, 0.8)
+    ) +
+    scale_y_continuous(trans = scales::pseudo_log_trans(base = 10))
+                       ## limits = c(0, absolute_axis_cut))
+
+## print(filter(tbl, NonMatchingAbsolute > absolute_axis_cut))
+
+ggsave(absolute_plot_output_path)
+

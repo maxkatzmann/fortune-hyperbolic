@@ -59,3 +59,36 @@ plot_output_path <- paste(plot_output_dir, "delaunay-edge-comparisons-only.pdf",
 ggsave(plot_output_path)
 
 print(filter(tbl, PreciseCoveredByTechnique < axis_cut))
+
+ggplot(tbl, aes(
+    x = reorder(DiskRadius, sort(as.numeric(DiskRadius))),
+    y = AbsoluteMissingInTechnique
+)) +
+    geom_boxplot(aes(
+        fill = factor(Precision, levels = precision_levels),
+        color = factor(Precision, levels = precision_levels)
+    )) +
+    scale_fill_hue(c = 30, l = 100, guide = "none") +
+    scale_color_hue(labels = c(
+        "CGAL (Converted)",
+        "Native (Double)",
+        "Native (32)",
+        "Native (48)",
+        "Native (64)",
+        "Native (80)",
+        "Native (96)",
+        "Native (112)"
+    )) +
+    labs(
+        x = "Disk Radius",
+        y = "Missing Edges",
+        color = "Technique"
+    ) +
+    theme(
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+        legend.position = c(0.16, 0.8)
+    ) +
+    scale_y_continuous(trans = scales::pseudo_log_trans(base = 10))
+
+absolute_plot_output_path <- paste(plot_output_dir, "delaunay-edge-comparisons-absolute-only.pdf", sep = "/")
+ggsave(absolute_plot_output_path)

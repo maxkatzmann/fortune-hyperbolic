@@ -25,7 +25,12 @@ def main(argv):
     write_csv_to_file(csv, args.output)
 
 
-def percent_of_covered_edges(triangulation1, triangulation2):
+def covered_edges(triangulation1, triangulation2):
+    # Returns a tuple containing:
+    # % of edges in 1 that can also be found in 2
+    # Absolute number of edges that 1 has but 2 has not
+    # % of edges in 2 that can also be found in 1
+    # Absolute number of edges that 2 has but 1 has not
     edges_from_1_covered_by_2 = 0
     edges_from_2_covered_by_1 = 0
 
@@ -43,7 +48,9 @@ def percent_of_covered_edges(triangulation1, triangulation2):
             edges_from_2_covered_by_1 += 1
 
     return (float(edges_from_1_covered_by_2) / float(edges_in_1),
-            float(edges_from_2_covered_by_1) / float(edges_in_2))
+            edges_in_1 - edges_from_1_covered_by_2,
+            float(edges_from_2_covered_by_1) / float(edges_in_2),
+            edges_in_2 - edges_from_2_covered_by_1)
 
 
 def get_rows_from_comparison_between(name, precision_triangulation,
@@ -53,23 +60,25 @@ def get_rows_from_comparison_between(name, precision_triangulation,
     disk_radius, diagram_id = name.split('-')
     number_of_points = get_number_of_points_in_file(disk_radius, diagram_id)
 
-    precise_edges_covered_by_cgal, cgal_edges_covered_by_precise = percent_of_covered_edges(
+    precise_edges_covered_by_cgal, absolute_missing_in_cgal, cgal_edges_covered_by_precise, absolute_missing_in_precise = covered_edges(
         precision_triangulation, cgal_triangulation)
 
     cgal_row = [
         disk_radius, diagram_id, number_of_points, "CGAL",
-        precise_edges_covered_by_cgal, cgal_edges_covered_by_precise
+        precise_edges_covered_by_cgal, absolute_missing_in_cgal,
+        cgal_edges_covered_by_precise, absolute_missing_in_precise
     ]
 
     rows.append(cgal_row)
 
     for (precision, native_triangulation) in native_triangulations:
-        precise_edges_covered_by_native, native_edges_covered_by_precise = percent_of_covered_edges(
+        precise_edges_covered_by_native, absolute_missing_in_native, native_edges_covered_by_precise, absolute_missing_in_precise = covered_edges(
             precision_triangulation, native_triangulation)
 
         row = [
             disk_radius, diagram_id, number_of_points, precision,
-            precise_edges_covered_by_native, native_edges_covered_by_precise
+            precise_edges_covered_by_native, absolute_missing_in_native,
+            native_edges_covered_by_precise, absolute_missing_in_precise
         ]
         rows.append(row)
 
@@ -78,8 +87,14 @@ def get_rows_from_comparison_between(name, precision_triangulation,
 
 def get_header():
     header = [
-        'DiskRadius', 'DiagramID', 'NumberOfSites', 'Precision',
-        'PreciseCoveredByTechnique', 'TechniqueCoveredByPrecise'
+        'DiskRadius',
+        'DiagramID',
+        'NumberOfSites',
+        'Precision',
+        'PreciseCoveredByTechnique',
+        'AbsoluteMissingInTechnique',
+        'TechniqueCoveredByPrecise',
+        'AbsoluteMissingInPrecise',
     ]
 
     return header

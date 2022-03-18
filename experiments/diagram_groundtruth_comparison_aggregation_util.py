@@ -65,7 +65,9 @@ def get_rows_from_comparison(comparison):
             float(result.numberOfVertices) /
             float(comparison.groundTruth.numberOfVertices),
             float(result.numberOfVerticesMatchingGroundTruth) /
-            float(comparison.groundTruth.numberOfVertices)
+            float(comparison.groundTruth.numberOfVertices),
+            comparison.groundTruth.numberOfVertices -
+            result.numberOfVerticesMatchingGroundTruth
         ])
 
     return rows
@@ -73,8 +75,13 @@ def get_rows_from_comparison(comparison):
 
 def get_header():
     return [
-        'DiskRadius', 'DiagramID', 'NumberOfSites', 'Precision',
-        'VertexPercentage', 'MatchingPercentage'
+        'DiskRadius',
+        'DiagramID',
+        'NumberOfSites',
+        'Precision',
+        'VertexPercentage',
+        'MatchingPercentage',
+        "NonMatchingAbsolute",
     ]
 
 
