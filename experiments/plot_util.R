@@ -196,7 +196,7 @@ absolute_voronoi_plot <- ggplot(
     ) +
     labs(
         x = "Disk Radius",
-        y = "Non-Matching Voronoi Vertices",
+        y = "Voronoi Vertex Mismatches",
         color = "Technique"
     ) +
     theme(
@@ -367,7 +367,7 @@ absolute_delaunay_plot <- ggplot(
     ) +
     labs(
         x = "Disk Radius",
-        y = "Missing Edges",
+        y = "Delaunay Edge Mismatches",
         color = "Technique"
     ) +
     theme(
