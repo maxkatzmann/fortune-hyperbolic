@@ -160,8 +160,8 @@ dev.off()
 
 #### PART I A: Comparting Voronoi Vertices Absolute
 
-breaks <- c(0, 1000, 10000, 100000)
-labels <- c(0, "1k", "10k", "100k")
+breaks <- c(0, 10, 100, 1000, 10000, 100000)
+labels <- c("0", "10", "100", "1k", "10k", "100k")
 limits <- c(0, 100005)
 
 absolute_axis_cut <- 10000
